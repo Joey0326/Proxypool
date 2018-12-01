@@ -5,7 +5,7 @@ REDIS_HOST = '127.0.0.1' # 上传到docker时一定要用实际的ip地址
 REDIS_PORT = 6379
 
 # Redis密码，如无填None
-REDIS_PASSWORD = '1234qwerr'
+REDIS_PASSWORD = ''
 
 REDIS_KEY = 'proxies'
 
