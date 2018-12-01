@@ -25,9 +25,9 @@ TESTER_CYCLE = 20
 GETTER_CYCLE = 300
 
 # 测试API，建议抓哪个网站测哪个
-TEST_URL = 'https://m.weibo.cn/profile/1227368500'
+TEST_URL = 'https://m.weibo.cn/profile/info?uid=1227368500'
 # API配置
-API_HOST = '0.0.0.0'
+API_HOST = '127.0.0.1'
 API_PORT = 5555
 
 # 开关

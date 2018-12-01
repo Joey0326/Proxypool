@@ -4,6 +4,7 @@ import re
 from pyquery import PyQuery as pq
 import time
 import requests
+from requests.exceptions import ConnectionError
 
 class ProxyMetaclass(type):
     def __new__(cls, name, bases, attrs):
@@ -50,8 +51,15 @@ class Crawler(object, metaclass=ProxyMetaclass):
                        'User-Agent': 'Mozilla / 5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit / 537.36 (KHTML, like Gecko) Chrome / 63.0.3239.108 Safari / 537.36'
                        }
 
-            html = requests.get(start_url,headers=headers)
-            if html.status_code == 200:
+            try:
+                html = requests.get(start_url,headers=headers)
+            except ConnectionError:
+                html = None
+                print('抓取失败', start_url)
+
+            time.sleep(0.5)
+
+            if html and html.status_code == 200:
                 print('Crawling: ',html.url)
                 ip_address = re.compile('<tr.*?>\s*<td>(.*?)</td>\s*<td>(.*?)</td>')
                 # \s* 匹配空格，起到换行作用
@@ -79,9 +87,16 @@ class Crawler(object, metaclass=ProxyMetaclass):
                 'Upgrade-Insecure-Requests': '1',
                 'User-Agent': 'Mozilla / 5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit / 537.36 (KHTML, like Gecko) Chrome / 63.0.3239.108 Safari / 537.36'
                 }
-            html = requests.get(start_url,headers=headers)
+
+            try:
+                html = requests.get(start_url,headers=headers)
+            except ConnectionError:
+                html = None
+                print('抓取失败', start_url)
+
             time.sleep(0.5)
-            if html.status_code == 200:
+
+            if html and html.status_code == 200:
                 print('Crawling: ',html.url)
                 ip_address = re.compile('<td data-title="IP">(.*?)</td>')
                 re_ip_address = ip_address.findall(html.text)
@@ -109,9 +124,16 @@ class Crawler(object, metaclass=ProxyMetaclass):
                 'Upgrade-Insecure-Requests': '1',
                 'User-Agent': 'Mozilla / 5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit / 537.36 (KHTML, like Gecko) Chrome / 63.0.3239.108 Safari / 537.36'
                 }
-            html = requests.get(start_url, headers=headers)
 
-            if html.status_code == 200:
+            try:
+                html = requests.get(start_url,headers=headers)
+            except ConnectionError:
+                html = None
+                print('抓取失败', start_url)
+
+            time.sleep(0.5)
+
+            if html and html.status_code == 200:
                 print('Crawling: ',html.url)
                 find_trs = re.compile('<tr class.*?>(.*?)</tr>', re.S)
                 trs = find_trs.findall(html.text)
@@ -140,8 +162,14 @@ class Crawler(object, metaclass=ProxyMetaclass):
             'Upgrade-Insecure-Requests': '1',
             'User-Agent': 'Mozilla / 5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit / 537.36 (KHTML, like Gecko) Chrome / 63.0.3239.108 Safari / 537.36'
             }
-        html = requests.get(start_url,headers=headers)
-        if html.status_code == 200:
+
+        try:
+            html = requests.get(start_url,headers=headers)
+        except ConnectionError:
+            html = None
+            print('抓取失败', start_url)
+
+        if html and html.status_code == 200:
             print('Crawling: ',html.url)
             find_tr = re.compile('<tr>(.*?)</tr>', re.S)
             trs = find_tr.findall(html.text)
@@ -173,8 +201,13 @@ class Crawler(object, metaclass=ProxyMetaclass):
             'User-Agent': 'Mozilla / 5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit / 537.36 (KHTML, like Gecko) Chrome / 63.0.3239.108 Safari / 537.36'
             }
         for url in urls:
-            html = requests.get(url,headers = headers)
-            if html.status_code == 200:
+            try:
+                html = requests.get(url,headers=headers)
+            except ConnectionError:
+                html = None
+                print('抓取失败', url)
+
+            if html and html.status_code == 200:
                 print('Crawling: ',html.url)
                 doc = pq(html.text)
                 trs = doc('.layui-table tbody tr').items()
@@ -199,8 +232,13 @@ class Crawler(object, metaclass=ProxyMetaclass):
             'Upgrade-Insecure-Requests': '1',
             'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.108 Safari/537.36',
         }
-        html = requests.get(start_url, headers=headers)
-        if html.status_code == 200:
+        try:
+            html = requests.get(start_url,headers=headers)
+        except ConnectionError:
+            html = None
+            print('抓取失败', start_url)
+
+        if html and html.status_code == 200:
             print('Crawling: ',html.url)
             ip_address = re.compile('<span><li>(\d+\.\d+\.\d+\.\d+)</li>.*?<li class=\"port.*?>(\d+)</li>', re.S)
             re_ip_address = ip_address.findall(html.text)
@@ -229,8 +267,14 @@ class Crawler(object, metaclass=ProxyMetaclass):
             }
         for url in urls:
             print('Crawling: ',url)
-            html = requests.get(url=url,headers = headers)
-            if html.status_code == 200:
+
+            try:
+                html = requests.get(url,headers=headers)
+            except ConnectionError:
+                html = None
+                print('抓取失败', url)
+
+            if html and html.status_code == 200:
                 doc = pq(html.text)
                 trs = doc('#list tbody tr').items()
                 for tr in trs:
@@ -260,8 +304,14 @@ class Crawler(object, metaclass=ProxyMetaclass):
 
         for url in urls:
             print('Crawling: ',url)
-            html = requests.get(url=url,headers = headers)
-            if html.status_code == 200:
+
+            try:
+                html = requests.get(url,headers=headers)
+            except ConnectionError:
+                html = None
+                print('抓取失败', url)
+
+            if html and html.status_code == 200:
                 doc = pq(html.text)
                 trs = doc('#list tbody tr').items()
                 for tr in trs:
@@ -288,8 +338,14 @@ class Crawler(object, metaclass=ProxyMetaclass):
                 'Upgrade-Insecure-Requests': '1',
                 'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.108 Safari/537.36',
             }
-            html = requests.get(start_url,headers=headers)
-            if html.status_code == 200:
+
+            try:
+                html = requests.get(start_url,headers=headers)
+            except ConnectionError:
+                html = None
+                print('抓取失败', start_url)
+
+            if html and html.status_code == 200:
                 print('Crawling: ',html.url)
                 doc = pq(html.text)
                 trs = doc('.dttable tbody tr').items()
@@ -318,8 +374,14 @@ class Crawler(object, metaclass=ProxyMetaclass):
             'Upgrade-Insecure-Requests': '1',
             'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.108 Safari/537.36',
         }
-        html = requests.get(start_url,headers =headers)
-        if html.status_code == 200:
+
+        try:
+            html = requests.get(start_url,headers=headers)
+        except ConnectionError:
+            html = None
+            print('抓取失败', start_url)
+
+        if html and html.status_code == 200:
             print('Crawling: ',html.url)
             doc = pq(html.text)
             trs = doc('table.table tbody tr').items()
@@ -340,8 +402,14 @@ class Crawler(object, metaclass=ProxyMetaclass):
         urls = [start_url.format(page) for page in range(1, page_count + 1)]
         for url in urls:
             print('Crawling', url)
-            html = requests.get(url)
-            if html.status_code ==  200:
+
+            try:
+                html = requests.get(url)
+            except ConnectionError:
+                html = None
+                print('抓取失败', url)
+
+            if html and html.status_code ==  200:
                 doc = pq(html.text)
                 trs = doc('.containerbox table tr:gt(0)').items()
                 for tr in trs:
